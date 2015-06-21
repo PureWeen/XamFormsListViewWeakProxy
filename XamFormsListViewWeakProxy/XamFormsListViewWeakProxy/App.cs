@@ -29,6 +29,8 @@ namespace XamFormsListViewWeakProxy
 
 
             Timer stateTimer = new Timer(OnClick, null, 2000, 2000);
+
+            //This event handleer keeps on ticking even after a GC
             theList.CollectionChanged += theList_CollectionChanged;
 		}
 
