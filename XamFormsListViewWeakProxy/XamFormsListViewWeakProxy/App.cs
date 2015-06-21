@@ -46,7 +46,9 @@ namespace XamFormsListViewWeakProxy
 
         private void OnClick(object state)
         {
-            theList.AddMonkey();
+            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                theList.AddMonkey()
+            );
         }
 
 		protected override void OnStart ()
@@ -115,7 +117,7 @@ namespace XamFormsListViewWeakProxy
                 }
             }
 
-            if(this.Count % 10 == 0)
+            if (this.Count == 5)
             {
                 //Force garbage collection to illustrate point
                 GC.Collect();
