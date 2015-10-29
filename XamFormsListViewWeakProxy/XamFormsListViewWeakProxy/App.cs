@@ -13,7 +13,8 @@ namespace XamFormsListViewWeakProxy
 	{
         MyList theList = new MyList();
 
-		public App ()
+        Timer stateTimer = null;
+        public App ()
 		{
 			// The root page of your application
 			MainPage = new ContentPage {
@@ -27,8 +28,7 @@ namespace XamFormsListViewWeakProxy
 				}
 			};
 
-
-            Timer stateTimer = new Timer(OnClick, null, 2000, 2000);
+            stateTimer = new Timer(OnClick, null, 2000, 2000);
 
             //This event handleer keeps on ticking even after a GC
             theList.CollectionChanged += theList_CollectionChanged;
@@ -39,7 +39,7 @@ namespace XamFormsListViewWeakProxy
             if(e.NewItems != null)
                 foreach(Monkey mono in e.NewItems)
                 {
-                    Debug.Write(mono);
+                    Debug.WriteLine(mono);
                 }
             
         }
@@ -47,7 +47,10 @@ namespace XamFormsListViewWeakProxy
         private void OnClick(object state)
         {
             Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
-                theList.AddMonkey()
+                {
+                    theList.AddMonkey();
+                    Debug.WriteLine("adding monkey");
+                }
             );
         }
 
