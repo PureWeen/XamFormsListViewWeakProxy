@@ -1,8 +1,10 @@
-﻿using System;
+﻿using ReactiveUI;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading;
 using Xamarin.Forms;
@@ -11,9 +13,8 @@ namespace XamFormsListViewWeakProxy
 {
 	public class App : Application
 	{
-        MyList theList = new MyList();
-
-        Timer stateTimer = null;
+        MyList2 theList = new MyList2();
+     
         public App ()
 		{
 			// The root page of your application
@@ -28,7 +29,10 @@ namespace XamFormsListViewWeakProxy
 				}
 			};
 
-            stateTimer = new Timer(OnClick, null, 2000, 2000);
+
+            Observable.Interval(TimeSpan.FromSeconds(2))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(_ => OnClick(null));
 
             //This event handleer keeps on ticking even after a GC
             theList.CollectionChanged += theList_CollectionChanged;
@@ -46,12 +50,8 @@ namespace XamFormsListViewWeakProxy
 
         private void OnClick(object state)
         {
-            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
-                {
-                    theList.AddMonkey();
-                    Debug.WriteLine("adding monkey");
-                }
-            );
+            theList.AddMonkey();
+            Debug.WriteLine("adding monkey");
         }
 
 		protected override void OnStart ()
@@ -69,6 +69,22 @@ namespace XamFormsListViewWeakProxy
 			// Handle when your app resumes
 		}
 	}
+
+    public class MyList2 : ReactiveList<Monkey>
+    {
+        internal void AddMonkey()
+        {
+            var me = new Monkey();
+            this.Add(me);
+
+            if (this.Count == 5)
+            {
+                //Force garbage collection to illustrate point
+                GC.Collect();
+                Debug.WriteLine(" GC.Collect()");
+            }
+        }
+    }
 
     public class Monkey
     {
