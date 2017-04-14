@@ -13,7 +13,7 @@ namespace XamFormsListViewWeakProxy
 {
 	public class App : Application
 	{
-        MyList2 theList = new MyList2();
+        MyList theList = new MyList();
      
         public App ()
 		{
@@ -76,11 +76,11 @@ namespace XamFormsListViewWeakProxy
         {
             var me = new Monkey();
             this.Add(me);
+            GC.Collect();
 
             if (this.Count == 5)
             {
                 //Force garbage collection to illustrate point
-                GC.Collect();
                 Debug.WriteLine(" GC.Collect()");
             }
         }
